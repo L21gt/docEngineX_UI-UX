@@ -1,0 +1,32 @@
+# --- Seguridad y Secretos ---
+# Ignorar archivos de variables de entorno (Vital)
+.env
+*.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# --- Dependencias de Node.js ---
+# No subimos las carpetas node_modules porque son muy pesadas 
+# y se regeneran con 'npm install'
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Docker ---
+# Ignorar los datos persistentes de la base de datos para que no se suban al repo
+postgres_data/
+
+# --- IDEs y Editores ---
+# Configuraciones específicas de VS Code o sistemas operativos
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- Logs y Temporales ---
+logs
+*.log
+npm-debug.log*

@@ -1,0 +1,35 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      # Levantamos Redis en la nube de GitHub para que los tests pasen
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18.x"
+
+      - name: Install dependencies (API)
+        run: |
+          cd backend-api
+          npm install
+
+      - name: Run Tests
+        run: |
+          cd backend-api
+          npm test
