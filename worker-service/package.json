@@ -12,8 +12,9 @@
   "type": "commonjs",
   "dependencies": {
     "aws-sdk": "^2.1693.0",
-    "bullmq": "^5.76.4",
+    "bullmq": "^5.76.5",
     "dotenv": "^17.4.2",
+    "fs-extra": "^11.3.4",
     "handlebars": "^4.7.9",
     "lucide-node": "^0.0.1-security",
     "pg": "^8.20.0",
