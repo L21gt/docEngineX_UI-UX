@@ -77,4 +77,46 @@ describe("Document API Endpoints", () => {
     // Confirmamos que NO se intentó encolar nada en Redis
     expect(documentQueue.add).not.toHaveBeenCalled();
   });
+
+  // --- PRUEBAS PARA EL ENDPOINT GET /list ---
+
+  it("GET /list - Debería retornar la lista de documentos con status 200", async () => {
+    // Preparar el mock: Simulamos que la BD devuelve una lista con 2 documentos
+    const mockDocuments = [
+      {
+        id: "uuid-1",
+        status: "completed",
+        template_type: "invoice",
+        file_url: "https://aws...",
+      },
+      {
+        id: "uuid-2",
+        status: "processing",
+        template_type: "invoice",
+        file_url: null,
+      },
+    ];
+    db.query.mockResolvedValue({ rows: mockDocuments });
+
+    // Ejecutar la petición
+    const response = await request(app).get("/list");
+
+    // Verificaciones
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(mockDocuments);
+
+    // Verificamos que se llamó a la BD para leer, no a la cola Redis
+    expect(db.query).toHaveBeenCalledTimes(1);
+    expect(documentQueue.add).not.toHaveBeenCalled();
+  });
+
+  it("GET /list - Debería retornar 500 si la base de datos falla al leer el historial", async () => {
+    // Preparar el mock: Simulamos caída de base de datos en la lectura
+    db.query.mockRejectedValue(new Error("Timeout en la base de datos"));
+
+    const response = await request(app).get("/list");
+
+    expect(response.status).toBe(500);
+    expect(response.body.error).toBe("Error interno al obtener el historial");
+  });
 });

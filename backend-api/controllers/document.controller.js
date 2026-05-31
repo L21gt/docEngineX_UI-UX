@@ -27,6 +27,20 @@ const generateDocument = async (req, res) => {
   }
 };
 
+/**
+ * Recupera el historial de documentos para poblar la tabla del Dashboard.
+ */
+const getDocuments = async (req, res) => {
+  try {
+    const documents = await DocumentService.getAllDocuments();
+    res.status(200).json(documents);
+  } catch (error) {
+    console.error("Error en DocumentController.getDocuments:", error);
+    res.status(500).json({ error: "Error interno al obtener el historial" });
+  }
+};
+
 module.exports = {
   generateDocument,
+  getDocuments,
 };

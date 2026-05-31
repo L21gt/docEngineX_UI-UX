@@ -33,6 +33,21 @@ class DocumentService {
 
     return newDoc;
   }
+
+  /**
+   * Obtiene el historial completo de documentos públicos.
+   * @returns {Array} Lista de documentos ordenados por fecha de creación descendente.
+   */
+  static async getAllDocuments() {
+    const queryText = `
+        SELECT id, status, template_type, file_url, error_reason, created_at 
+        FROM Public_Documents 
+        ORDER BY created_at DESC;
+    `;
+    // Excluimos json_data para no saturar la red (Over-fetching)
+    const result = await db.query(queryText);
+    return result.rows;
+  }
 }
 
 module.exports = DocumentService;
