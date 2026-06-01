@@ -1,0 +1,133 @@
+/* Variables globales para mantener consistencia en el diseño */
+:root {
+  --primary-color: #004a99;
+  --bg-color: #f4f7f6;
+  --card-bg: #ffffff;
+  --text-main: #333333;
+  --border-color: #e0e0e0;
+  --status-completed: #28a745;
+  --status-processing: #ffc107;
+  --status-queued: #17a2b8;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+}
+
+.dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  text-align: center;
+  padding: 20px 0;
+  border-bottom: 2px solid var(--primary-color);
+  margin-bottom: 30px;
+}
+
+.status-indicator {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+.status-completed { background-color: var(--status-completed); }
+.status-processing { background-color: var(--status-processing); color: #000; }
+.status-queued { background-color: var(--status-queued); }
+
+/* --- ESTILOS PARA FORMULARIO Y TABLA --- */
+
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+}
+
+/* Diseño responsivo: En pantallas grandes, el formulario a la izq y tabla a la der */
+@media (min-width: 992px) {
+  .main-content {
+    grid-template-columns: 350px 1fr;
+  }
+}
+
+.panel {
+  background-color: var(--card-bg);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  border: 1px solid var(--border-color);
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-family: monospace;
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.btn-submit:hover {
+  background-color: #003366;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.documents-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.documents-table th, .documents-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.documents-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.link-btn {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.link-btn:hover {
+  text-decoration: underline;
+}
