@@ -8,6 +8,7 @@
   --status-completed: #28a745;
   --status-processing: #ffc107;
   --status-queued: #17a2b8;
+  --status-failed: #dc3545;
 }
 
 body {
@@ -42,6 +43,7 @@ body {
 .status-completed { background-color: var(--status-completed); }
 .status-processing { background-color: var(--status-processing); color: #000; }
 .status-queued { background-color: var(--status-queued); }
+.status-failed { background-color: var(--status-failed); }
 
 /* --- ESTILOS PARA FORMULARIO Y TABLA --- */
 
@@ -130,4 +132,39 @@ body {
 
 .link-btn:hover {
   text-decoration: underline;
+}
+
+/* --- FILTROS DE AUDITORÍA Y SPINNER --- */
+
+.filter-section {
+  background-color: #f8f9fa;
+  padding: 12px 15px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border: 1px solid var(--border-color);
+}
+
+.filter-section label {
+  font-weight: 600;
+  margin: 0;
+}
+
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+/* Animación de rotación infinita para el spinner */
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }

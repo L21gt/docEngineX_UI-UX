@@ -2,11 +2,6 @@ import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import "./App.css";
 
-/**
- * @fileoverview Componente principal del Dashboard.
- * Gestiona el envío de JSON, la visualización del historial y las actualizaciones en tiempo real.
- */
-
 const socket = io("http://127.0.0.1:3000");
 
 function App() {
@@ -17,26 +12,24 @@ function App() {
   );
   const [templateType, setTemplateType] = useState("invoice");
 
-  // 1. Efecto de Inicialización y WebSockets
+  // Nuevo estado para controlar los filtros de auditoría
+  const [filterStatus, setFilterStatus] = useState("all");
+
   useEffect(() => {
     socket.on("connect", () => setIsConnected(true));
     socket.on("disconnect", () => setIsConnected(false));
 
-    // Cargar historial inicial desde la API Rest
     fetchDocuments();
 
-    // Suscripción al evento de cambio de estado emitido por BullMQ + Express
     socket.on("document_status_change", (data) => {
       const { jobId, status } = data;
 
-      // Actualizamos el estado de inmutabilidad en React para forzar un re-render de la fila afectada
       setDocuments((prevDocs) =>
         prevDocs.map((doc) =>
           doc.id === jobId ? { ...doc, status: status } : doc,
         ),
       );
 
-      // Si se completó, volvemos a hacer fetch para obtener la URL del S3
       if (status === "completed") {
         fetchDocuments();
       }
@@ -49,9 +42,6 @@ function App() {
     };
   }, []);
 
-  /**
-   * Obtiene el historial de documentos públicos.
-   */
   const fetchDocuments = async () => {
     try {
       const response = await fetch("http://localhost:3000/list");
@@ -62,9 +52,6 @@ function App() {
     }
   };
 
-  /**
-   * Maneja el envío del formulario, validando el JSON antes de despachar.
-   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     let parsedData;
@@ -89,13 +76,18 @@ function App() {
       });
 
       if (response.ok) {
-        // Recargamos rápido para que el nuevo documento aparezca como "queued" en la tabla
         fetchDocuments();
       }
     } catch (error) {
       console.error("Error enviando petición:", error);
     }
   };
+
+  // Lógica de filtrado antes de renderizar la tabla
+  const filteredDocuments = documents.filter((doc) => {
+    if (filterStatus === "all") return true;
+    return doc.status === filterStatus;
+  });
 
   return (
     <div className="dashboard-container">
@@ -116,7 +108,6 @@ function App() {
       </header>
 
       <main className="main-content">
-        {/* Panel Izquierdo: Formulario */}
         <section className="panel">
           <h2>Generar Documento</h2>
           <form onSubmit={handleSubmit}>
@@ -146,9 +137,26 @@ function App() {
           </form>
         </section>
 
-        {/* Panel Derecho: Historial Público */}
         <section className="panel">
           <h2>Historial Público</h2>
+
+          {/* Implementación de Filtros de Auditoría */}
+          <div className="filter-section">
+            <label>Filtrar por estado:</label>
+            <select
+              className="form-control"
+              style={{ width: "auto" }}
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
+              <option value="all">Todos los documentos</option>
+              <option value="completed">Completados</option>
+              <option value="processing">En proceso</option>
+              <option value="queued">En cola</option>
+              <option value="failed">Fallidos (Auditoría)</option>
+            </select>
+          </div>
+
           <div className="table-responsive">
             <table className="documents-table">
               <thead>
@@ -161,7 +169,8 @@ function App() {
                 </tr>
               </thead>
               <tbody>
-                {documents.map((doc) => (
+                {/* Renderizamos el array filtrado en lugar del original */}
+                {filteredDocuments.map((doc) => (
                   <tr key={doc.id}>
                     <td title={doc.id}>{doc.id.substring(0, 8)}...</td>
                     <td>{doc.template_type}</td>
@@ -170,6 +179,13 @@ function App() {
                       <span className={`status-indicator status-${doc.status}`}>
                         {doc.status}
                       </span>
+                      {/* Cumplimiento del diagrama: Spinner visual para 'processing' */}
+                      {doc.status === "processing" && (
+                        <div
+                          className="spinner"
+                          title="Procesando documento"
+                        ></div>
+                      )}
                     </td>
                     <td>
                       {doc.status === "completed" && doc.file_url ? (
@@ -187,13 +203,15 @@ function App() {
                     </td>
                   </tr>
                 ))}
-                {documents.length === 0 && (
+
+                {/* Mensaje amigable si el filtro no encuentra resultados */}
+                {filteredDocuments.length === 0 && (
                   <tr>
                     <td
                       colSpan="5"
                       style={{ textAlign: "center", padding: "20px" }}
                     >
-                      No hay documentos en el historial.
+                      No hay documentos que coincidan con este filtro.
                     </td>
                   </tr>
                 )}

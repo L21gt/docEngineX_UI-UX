@@ -61,6 +61,12 @@ queueEvents.on("completed", ({ jobId }) => {
   console.log(`[Queue] Job completado: ${jobId}`);
   io.emit("document_status_change", { jobId, status: "completed" });
 });
+
+// Escuchar fallos y avisarle al Frontend
+queueEvents.on("failed", ({ jobId, failedReason }) => {
+  console.log(`[Queue] Job fallido: ${jobId}`, failedReason);
+  io.emit("document_status_change", { jobId, status: "failed" });
+});
 // -------------------------------------------------
 
 const PORT = process.env.PORT || 3000;
